@@ -1,5 +1,5 @@
 PROGRAM_NAME = bifex
-OBJECTS = key_types.o bif_entry.o key_entry.o key.o
+OBJECTS = key_types.o key_entry.o bif_entry.o bif.o key.o
 CPP_VERSION = -std=c++17
 
 all: clean $(OBJECTS) main
@@ -10,6 +10,9 @@ main: $(OBJECTS)
 
 key_types.o:
 	g++ -c $(CPP_VERSION) -o key_types.o key_types.cpp
+
+bif.o:
+	g++ -c $(CPP_VERSION) -o bif.o bif.cpp
 
 bif_entry.o:
 	g++ -c $(CPP_VERSION) -o bif_entry.o bif_entry.cpp

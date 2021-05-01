@@ -14,15 +14,6 @@ namespace ie
     file.read((char *)&bifSectionOffset, 4);
     file.read((char *)&resourceSectionOffset, 4);
 
-    std::cout << "Key file statistics: " << std::endl;
-    std::cout << "\tSignature: " << signature[0] << signature[1] << signature[2] << signature[3] << std::endl;
-    std::cout << "\tVersion: " << version[0] << version[1] << version[2] << version[3] << std::endl;
-    std::cout << "\tBif Count: " << bifCount << std::endl;
-    std::cout << "\tResource Count: " << resourceCount << std::endl;
-    std::cout << "\tBif Section Offset: " << bifSectionOffset << std::endl;
-    std::cout << "\tResource Section Offset: " << resourceSectionOffset << std::endl
-              << std::endl;
-
     // Skip to the bif section
     file.seekg(bifSectionOffset);
     // Loop through each bif file resource and read them in
@@ -41,8 +32,34 @@ namespace ie
     {
       KeyResourceEntry keyResourceEntry;
       keyResourceEntry.ReadFromFile(file);
-      resourceEntries.push_back(keyResourceEntry);
+      resourceEntries[keyResourceEntry.GetSourceIndex()].push_back(keyResourceEntry);
     }
+
+    return true;
+  }
+
+  bool Key::ReadBifs()
+  {
+    int existCount = 0;
+    int notExistCount = 0;
+    // Read the bif entry information from each bif file
+    for (int i = 0; i < resourceEntries.size(); i++)
+    {
+      fs::path basePath("./test_data");
+      fs::path bifPath(bifEntries[i].GetName());
+      basePath /= bifPath;
+      if (fs::exists(basePath))
+      {
+        std::ifstream bifFile;
+        bifFile.open(basePath, std::ios::binary | std::ios::in);
+        Bif bif;
+        bif.ReadFromFile(bifFile);
+        bifs.push_back(bif);
+      }
+    }
+
+    std::cout << "Files exist: " << existCount << std::endl;
+    std::cout << "Files not exist: " << notExistCount << std::endl;
 
     return true;
   }
@@ -52,8 +69,11 @@ namespace ie
     file << "Resource Entry,File Name,Bif File" << std::endl;
     for (int i = 0; i < resourceEntries.size(); i++)
     {
-      uint16_t source_index = resourceEntries[i].GetSourceIndex();
-      file << i << "," << resourceEntries[i].GetFullFileName() << "," << bifEntries[source_index].GetName() << std::endl;
+      for (int j = 0; j < resourceEntries[i].size(); j++)
+      {
+        uint16_t source_index = resourceEntries[i][j].GetSourceIndex();
+        file << i << "-" << j << "," << resourceEntries[i][j].GetFullFileName() << "," << bifEntries[source_index].GetName() << std::endl;
+      }
     }
 
     return true;
@@ -76,9 +96,12 @@ namespace ie
     std::cout << "Key resource entries: " << std::endl;
     for (int i = 0; i < resourceEntries.size(); i++)
     {
-      std::cout << "\tResource Entry #" << i + 1 << ":" << std::endl;
-      std::cout << "\tFile Name: " << resourceEntries[i].GetFullFileName() << std::endl
-                << std::endl;
+      for (int j = 0; j < resourceEntries[i].size(); j++)
+      {
+        std::cout << "\tResource Entry #" << i << "-" << j << ":" << std::endl;
+        std::cout << "\tFile Name: " << resourceEntries[i][j].GetFullFileName() << std::endl
+                  << std::endl;
+      }
     }
   }
 }

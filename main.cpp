@@ -13,7 +13,7 @@ fs::path keyFilePath("./test_data/chitin.key");
 fs::path outputCsvPath("./test_data/output.csv");
 
 void usage();
-void dump();
+void dump(ie::Key key);
 void keyFileExists(fs::path keyFilePath);
 
 int main(int argc, char **argv)
@@ -26,11 +26,14 @@ int main(int argc, char **argv)
   ie::Key key;
 
   // Parse the key file
-  bool parse_success = key.ReadFromFile(keyFileStream);
+  bool key_parse_success = key.ReadFromFile(keyFileStream);
+  // Read the bif files
+  bool bif_parse_success = key.ReadBifs();
 
-  std::cout << "Successfully parsed the key file: " << parse_success << std::endl;
+  std::cout << "Successfully parsed the key file: " << key_parse_success << std::endl;
+  std::cout << "Successfully parsed bif files: " << bif_parse_success << std::endl;
 
-  dump();
+  dump(key);
 
   return 0;
 }
@@ -39,7 +42,7 @@ void usage()
 {
 }
 
-void dump()
+void dump(ie::Key key)
 {
   //key.DumpKeyBifEntriesToConsole();
   //key.DumpKeyResourceEntriesToConsole();

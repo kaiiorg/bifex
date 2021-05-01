@@ -5,8 +5,12 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <map>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 #include "key_entry.h"
+#include "bif.h"
 
 namespace ie
 {
@@ -22,13 +26,18 @@ namespace ie
 
     // Data parsed from the key file
     std::vector<KeyBifEntry> bifEntries;
-    std::vector<KeyResourceEntry> resourceEntries;
+    std::map<uint32_t, std::vector<KeyResourceEntry>> resourceEntries;
+
+    // Data read from various bif files
+    std::vector<Bif> bifs;
   
   public:
     Key();
     ~Key();
 
     bool ReadFromFile(std::ifstream &file);
+
+    bool ReadBifs();
 
     bool DumpKeyToCsv(std::ofstream &file);
     void DumpKeyBifEntriesToConsole();
