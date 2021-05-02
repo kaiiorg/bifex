@@ -36,8 +36,8 @@ namespace ie
     ~Key();
 
     bool ReadFromFile(std::ifstream &file);
-
     bool ReadBifs();
+    bool ExtractAllBifs(fs::path outdir);
 
     bool DumpKeyToCsv(std::ofstream &file);
     void DumpKeyBifEntriesToConsole();

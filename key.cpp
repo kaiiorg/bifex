@@ -64,6 +64,44 @@ namespace ie
     return true;
   }
 
+  bool Key::ExtractAllBifs(fs::path outdir)
+  {
+    // Check that a dir exists at the outdir location
+    if (!fs::exists(outdir) || !fs::is_directory(outdir))
+      return false;
+
+    // Loop through each bif file
+    for (int i = 0; i < resourceEntries.size(); i++)
+    {
+      // Build the output directory path
+      fs::path bdir = outdir / bifEntries[i].GetName();
+      // If the output directory doesn't exist, make it
+      if (!fs::exists(bdir))
+      {
+        std::cout << "Making directories for " << bdir << std::endl;
+        fs::create_directories(bdir);
+      }
+      // If the output path isn't a directory, something has gone wrong; skip this bif file.
+      if (!fs::is_directory(bdir))
+        continue;
+      
+      // Open the bif file
+      
+
+
+      // Loop through each resource for this bif file and extract it
+      for (int j = 0; j < resourceEntries[i].size(); j++)
+      {
+        // Build the path
+        fs::path outputFilePath = bdir / resourceEntries[i][j].GetFullFileName();
+        // Open the output file
+        std::ofstream &outFile(outputFile, std::ios::binary);
+      }
+    }
+
+    return true;
+  }
+
   bool Key::DumpKeyToCsv(std::ofstream &file)
   {
     file << "Resource Entry,File Name,Bif File" << std::endl;

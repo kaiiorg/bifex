@@ -11,6 +11,7 @@ namespace fs = std::filesystem;
 
 fs::path keyFilePath("./test_data/chitin.key");
 fs::path outputCsvPath("./test_data/output.csv");
+fs::path outputDir("./test_data/output/");
 
 void usage();
 void dump(ie::Key key);
@@ -33,7 +34,7 @@ int main(int argc, char **argv)
   std::cout << "Successfully parsed the key file: " << key_parse_success << std::endl;
   std::cout << "Successfully parsed bif files: " << bif_parse_success << std::endl;
 
-  dump(key);
+  key.ExtractAllBifs(outputDir);
 
   return 0;
 }
